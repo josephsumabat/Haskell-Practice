@@ -11,8 +11,9 @@ main=do
         print (join (Cons list1 (Cons list2 (Cons list2 None))))
         print (fmap (+) list1 <*> list2)
         print (list1 >>= \n ->return n)
+        print (foldr (-) 0 list1)
 
-data MyList other= None | Cons other (MyList other) deriving (Show, Eq)
+data MyList a= None | Cons a (MyList a) deriving (Show, Eq)
 listhead::MyList a-> a
 listhead (Cons n rest)= n
 listtail::MyList a->MyList a
@@ -40,3 +41,7 @@ instance Applicative MyList where
 instance Monad MyList where
     return x = (Cons x None)
     list  >>= f = join (fmap f list)
+
+instance Foldable MyList where
+    foldr f acc None = acc
+    foldr f acc (Cons n rest) = f n (foldr f acc rest)
